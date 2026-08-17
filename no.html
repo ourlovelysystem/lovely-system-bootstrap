@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daly Diligence LLC Bootstrap</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #fff;
+      color: #111;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .setup {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      opacity: 1;
+      transition: opacity 700ms ease;
+    }
+
+    .setup-inner {
+      display: grid;
+      place-items: center;
+      gap: 0.35em;
+      width: 100%;
+      text-align: center;
+    }
+
+    .line {
+      margin: 0;
+      min-height: 1.1em;
+      font-weight: 800;
+      font-size: clamp(4rem, 10vw, 8rem);
+      line-height: 1.05;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .piece {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.08em);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .piece.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .punct { margin-left: 0.03em; }
+
+    .dot {
+      display: inline-block;
+      opacity: 0;
+      transform: scale(0.55);
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+
+    .dot.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .finale {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 250ms linear;
+      background: #fff;
+    }
+
+    .finale.visible { opacity: 1; }
+
+    .script-mask {
+      position: relative;
+      z-index: 5;
+      width: min(96vw, 1200px);
+      padding: 0.28em 0.08em 0.42em;
+      text-align: center;
+      overflow: visible;
+    }
+
+    .script {
+      display: inline-block;
+      position: relative;
+      margin: 0;
+      padding: 0.04em 0.08em 0.22em;
+      font-family: "Snell Roundhand", "Apple Chancery", "URW Chancery L", cursive;
+      font-size: clamp(4.4rem, 10vw, 9rem);
+      font-weight: 700;
+      line-height: 1.2;
+
+      /* Reveal the actual glyphs without vertically clipping descenders. */
+      -webkit-mask-image: linear-gradient(#000 0 0);
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: left center;
+      -webkit-mask-size: 0% 100%;
+      mask-image: linear-gradient(#000 0 0);
+      mask-repeat: no-repeat;
+      mask-position: left center;
+      mask-size: 0% 100%;
+    }
+
+    .script::after {
+      content: "";
+      position: absolute;
+      top: 48%;
+      left: 0;
+      width: 0.13em;
+      height: 0.13em;
+      border-radius: 50%;
+      background: #111;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .script.write {
+      animation: write-left-to-right 2450ms cubic-bezier(.18,.72,.2,1) forwards;
+    }
+
+    .script.write::after {
+      animation: pen-travel 2450ms cubic-bezier(.18,.72,.2,1) forwards;
+    }
+
+    .burst-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .burst-layer.explode {
+      animation: burst-layer-in 1400ms ease-out forwards;
+    }
+
+    .sunburst {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(120vw, 1300px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0.08) rotate(-12deg);
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          rgba(222, 151, 0, 0.48) 0deg 2deg,
+          transparent 2deg 9deg
+        );
+      opacity: 0;
+    }
+
+    .burst-layer.explode .sunburst {
+      animation: sunburst 1600ms cubic-bezier(.16,.84,.24,1) forwards;
+    }
+
+    .firework {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d89a00;
+      box-shadow:
+        0 -48px 0 -2px #d89a00,
+        34px -34px 0 -2px #d89a00,
+        48px 0 0 -2px #d89a00,
+        34px 34px 0 -2px #d89a00,
+        0 48px 0 -2px #d89a00,
+        -34px 34px 0 -2px #d89a00,
+        -48px 0 0 -2px #d89a00,
+        -34px -34px 0 -2px #d89a00,
+        0 -82px 0 -3px #f4c84a,
+        58px -58px 0 -3px #f4c84a,
+        82px 0 0 -3px #f4c84a,
+        58px 58px 0 -3px #f4c84a,
+        0 82px 0 -3px #f4c84a,
+        -58px 58px 0 -3px #f4c84a,
+        -82px 0 0 -3px #f4c84a,
+        -58px -58px 0 -3px #f4c84a;
+      opacity: 0;
+      transform: scale(0.12);
+    }
+
+    .firework:nth-of-type(2) { left: 14%; top: 20%; }
+    .firework:nth-of-type(3) { right: 14%; top: 18%; }
+    .firework:nth-of-type(4) { left: 18%; bottom: 18%; }
+    .firework:nth-of-type(5) { right: 18%; bottom: 20%; }
+    .firework:nth-of-type(6) { left: 50%; top: 12%; }
+
+    .burst-layer.explode .firework:nth-of-type(2) { animation: firework 1100ms ease-out 100ms forwards; }
+    .burst-layer.explode .firework:nth-of-type(3) { animation: firework 1200ms ease-out 300ms forwards; }
+    .burst-layer.explode .firework:nth-of-type(4) { animation: firework 1150ms ease-out 500ms forwards; }
+    .burst-layer.explode .firework:nth-of-type(5) { animation: firework 1200ms ease-out 700ms forwards; }
+    .burst-layer.explode .firework:nth-of-type(6) { animation: firework 1250ms ease-out 900ms forwards; }
+
+    @keyframes write-left-to-right {
+      0% {
+        -webkit-mask-size: 0% 100%;
+        mask-size: 0% 100%;
+      }
+      12% {
+        -webkit-mask-size: 7% 100%;
+        mask-size: 7% 100%;
+      }
+      38% {
+        -webkit-mask-size: 36% 100%;
+        mask-size: 36% 100%;
+      }
+      62% {
+        -webkit-mask-size: 61% 100%;
+        mask-size: 61% 100%;
+      }
+      84% {
+        -webkit-mask-size: 86% 100%;
+        mask-size: 86% 100%;
+      }
+      100% {
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+      }
+    }
+
+    @keyframes pen-travel {
+      0%   { left: 0%; opacity: 0; transform: translate(-50%, -50%) rotate(-18deg); }
+      5%   { opacity: .75; }
+      92%  { opacity: .75; }
+      100% { left: 100%; opacity: 0; transform: translate(-50%, -50%) rotate(12deg); }
+    }
+
+    @keyframes burst-layer-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes sunburst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.08) rotate(-12deg);
+      }
+      25% { opacity: 0.55; }
+      100% {
+        opacity: 0.20;
+        transform: translate(-50%, -50%) scale(1.18) rotate(8deg);
+      }
+    }
+
+    @keyframes firework {
+      0%   { opacity: 0; transform: scale(0.12); }
+      18%  { opacity: 1; }
+      74%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.35); }
+    }
+
+    /* Added tail-of-finale fireworks. Everything above remains unchanged. */
+    .rocket-show {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .rocket-show.behind {
+      z-index: 2;
+    }
+
+    .rocket-show.front {
+      z-index: 8;
+    }
+
+    .rocket {
+      position: absolute;
+      left: var(--x);
+      bottom: -24px;
+      width: 4px;
+      height: 18px;
+      border-radius: 999px;
+      background: #d89a00;
+      box-shadow: 0 8px 12px rgba(216, 154, 0, 0.45);
+      transform: translate(-50%, 0);
+      opacity: 0;
+      animation: rocket-rise var(--flight) linear forwards;
+    }
+
+    .rocket::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 12px;
+      width: 2px;
+      height: 28px;
+      transform: translateX(-50%);
+      background: linear-gradient(to bottom, rgba(216,154,0,.75), rgba(216,154,0,0));
+    }
+
+    .explosion {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: 1px;
+      height: 1px;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: var(--spark);
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0);
+      animation: particle-burst var(--life) cubic-bezier(.12,.72,.22,1) forwards;
+    }
+
+    @keyframes rocket-rise {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scaleY(.8);
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, var(--rise)) scaleY(1.05);
+      }
+    }
+
+    @keyframes particle-burst {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(.7);
+      }
+      55% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) scale(.15);
+      }
+    }
+
+
+    .reverse-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      background: #111;
+      mix-blend-mode: difference;
+      opacity: 0;
+    }
+
+    .reverse-flash.fire {
+      animation: reverse-video-flash 440ms ease-out forwards;
+    }
+
+    @keyframes reverse-video-flash {
+      0%   { opacity: 0; }
+      10%  { opacity: 1; }
+      45%  { opacity: .78; }
+      100% { opacity: 0; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="reverse-flash" id="reverseFlash" aria-hidden="true"></div>
+
+  <main class="stage">
+    <section class="setup" id="setup">
+      <div class="setup-inner">
+        <p class="line">
+          <span class="piece" id="noWord">No</span><span class="piece punct" id="questionMark">?</span><span class="piece punct" id="exclamationMark">!</span>
+        </p>
+
+        <p class="line">
+          <span class="piece" id="wellWord">Well</span>
+          <span class="dot" id="w1">.</span><span class="dot" id="w2">.</span><span class="dot" id="w3">.</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="finale" id="finale">
+      <div class="burst-layer" id="burstLayer" aria-hidden="true">
+        <div class="sunburst"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+      </div>
+
+
+      <div class="rocket-show behind" id="rocketBehind" aria-hidden="true"></div>
+      <div class="rocket-show front" id="rocketFront" aria-hidden="true"></div>
+
+      <div class="script-mask">
+        <h1 class="script" id="finalScript">Fuck you then!</h1>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const show = id => document.getElementById(id).classList.add("visible");
+
+
+    function launchRocket(layer) {
+      const x = 8 + Math.random() * 84;
+      const targetY = 10 + Math.random() * 58;
+      const flight = 620 + Math.random() * 360;
+
+      const rocket = document.createElement("div");
+      rocket.className = "rocket";
+      rocket.style.setProperty("--x", `${x}%`);
+      rocket.style.setProperty("--flight", `${flight}ms`);
+      rocket.style.setProperty("--rise", `${-(window.innerHeight * (1 - targetY / 100))}px`);
+      layer.appendChild(rocket);
+
+      // Detonate just before the CSS flight animation reaches its final frame.
+      // This removes the visible "hang" at the top: the rocket disappears and
+      // the explosion begins in the same timer callback.
+      setTimeout(() => {
+        rocket.remove();
+        explodeFirework(layer, x, targetY);
+      }, flight * 0.985);
+    }
+
+
+    function flashReverseVideo() {
+      const flash = document.getElementById("reverseFlash");
+
+      flash.classList.remove("fire");
+
+      // Force reflow so rapidly overlapping explosions can retrigger the flash.
+      void flash.offsetWidth;
+
+      flash.classList.add("fire");
+    }
+
+    function explodeFirework(layer, x, y) {
+      flashReverseVideo();
+      const explosion = document.createElement("div");
+      explosion.className = "explosion";
+      explosion.style.setProperty("--x", `${x}%`);
+      explosion.style.setProperty("--y", `${y}%`);
+
+      const particleCount = 26 + Math.floor(Math.random() * 16);
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("span");
+        particle.className = "particle";
+
+        const angle = (360 / particleCount) * i + (Math.random() * 14 - 7);
+        const distance = 95 + Math.random() * 145;
+        const life = 1500 + Math.random() * 1100;
+        const size = 3 + Math.random() * 5;
+        const spark = Math.random() > 0.45 ? "#d89a00" : "#f4c84a";
+
+        particle.style.setProperty("--angle", `${angle}deg`);
+        particle.style.setProperty("--distance", `${distance}px`);
+        particle.style.setProperty("--life", `${life}ms`);
+        particle.style.setProperty("--size", `${size}px`);
+        particle.style.setProperty("--spark", spark);
+
+        explosion.appendChild(particle);
+      }
+
+      layer.appendChild(explosion);
+
+      setTimeout(() => explosion.remove(), 3000);
+    }
+
+    async function runFireworkTail() {
+      const behind = document.getElementById("rocketBehind");
+      const front = document.getElementById("rocketFront");
+
+      const endAt = performance.now() + 9000;
+
+      while (performance.now() < endAt) {
+        const layer = Math.random() < 0.5 ? behind : front;
+
+        launchRocket(layer);
+
+        if (Math.random() < 0.34) {
+          setTimeout(() => {
+            const secondLayer = Math.random() < 0.5 ? behind : front;
+            launchRocket(secondLayer);
+          }, 120 + Math.random() * 220);
+        }
+
+        await wait(280 + Math.random() * 420);
+      }
+    }
+
+
+    async function run() {
+      await wait(350);
+      show("noWord");
+
+      await wait(1000);
+      show("questionMark");
+
+      await wait(900);
+      show("exclamationMark");
+
+      await wait(1250);
+      show("wellWord");
+
+      await wait(1050);
+      show("w1");
+
+      await wait(900);
+      show("w2");
+
+      await wait(900);
+      show("w3");
+
+      await wait(1600);
+
+      const setup = document.getElementById("setup");
+      setup.style.opacity = "0";
+
+      await wait(750);
+      setup.style.display = "none";
+
+      const finale = document.getElementById("finale");
+      finale.classList.add("visible");
+
+      await wait(350);
+
+      const script = document.getElementById("finalScript");
+      script.classList.add("write");
+
+      await wait(2450);
+
+      document.getElementById("burstLayer").classList.add("explode");
+
+      /* Tail of finale: overlapping randomized rockets in front of and behind the script. */
+      await wait(450);
+      runFireworkTail();
+    }
+
+    run();
+  </script>
+</body>
+</html>

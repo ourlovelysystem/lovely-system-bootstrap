@@ -1,2 +1,2 @@
-# lovely-system-bootstrap
-Bootstrap artifacts for Our Lovely System
+# dalydiligence-bootstrap
+Bootstrap entry point for Daly Diligence LLC
