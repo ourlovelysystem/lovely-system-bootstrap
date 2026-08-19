@@ -4,7 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Lovely System Bootstrap</title>
+
   <style>
+    :root {
+      --paper: #e5cfaa;
+      --paper-light: #f2e5ca;
+      --ink: #17130d;
+      --gold: #9a6a19;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -13,82 +21,319 @@
     body {
       margin: 0;
       min-height: 100%;
-      background: #d9c39b;
     }
 
     body {
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      overflow: auto;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at 50% 35%, var(--paper-light) 0, var(--paper) 58%, #c9a978 100%);
     }
 
-    .poster {
+    .page {
       position: relative;
-      width: min(100vw, calc(100vh * 2 / 3));
-      aspect-ratio: 2 / 3;
-      background: #d9c39b;
+      isolation: isolate;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .poster img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      box-shadow: inset 0 0 5rem rgba(91, 54, 11, .26);
+      background:
+        linear-gradient(90deg, rgba(88, 50, 8, .12), transparent 4%, transparent 96%, rgba(88, 50, 8, .12)),
+        linear-gradient(rgba(88, 50, 8, .10), transparent 5%, transparent 95%, rgba(88, 50, 8, .10));
+    }
+
+    .beholder {
+      position: absolute;
+      z-index: -2;
+      left: 50%;
+      top: 48%;
+      transform: translate(-50%, -50%);
+      width: min(96vw, 1050px);
+      height: auto;
+      opacity: .18;
+      filter: sepia(.9) saturate(.7) contrast(.95);
+      pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
     }
 
-    .choice {
+    .content {
+      width: min(1000px, 95vw);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    .beauty {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .beauty strong {
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .beholder-line {
+      margin: .55rem 0 0;
+      font-size: clamp(1.25rem, 2.6vw, 2.1rem);
+      font-style: italic;
+    }
+
+    .rule {
+      width: min(320px, 58vw);
+      height: 1px;
+      margin: .9rem auto;
+      background: rgba(154, 106, 25, .62);
+      position: relative;
+    }
+
+    .rule::after {
+      content: "✦";
       position: absolute;
-      top: 88.2%;
-      height: 8.5%;
-      display: block;
-      text-indent: -9999px;
-      overflow: hidden;
-      border-radius: 0.5rem;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -52%);
+      padding: 0 .6rem;
+      color: var(--gold);
+      background: transparent;
+      text-shadow: 0 0 8px var(--paper);
+      font-size: .95rem;
+    }
+
+    .behold {
+      margin: .1rem 0 .55rem;
+      font-size: clamp(5.5rem, 15vw, 10.5rem);
+      line-height: .86;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+
+    .describe {
+      margin: .25rem 0 .9rem;
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+    }
+
+    .shape {
+      margin: .15rem 0;
+      font-size: clamp(1.15rem, 2.3vw, 1.8rem);
+    }
+
+    .system {
+      margin: .18rem 0;
+      font-size: clamp(2.25rem, 5.4vw, 4.35rem);
+      line-height: 1.03;
+    }
+
+    .connector {
+      margin: .18rem 0;
+      font-size: clamp(1.05rem, 2vw, 1.45rem);
+      font-weight: 600;
+    }
+
+    .emerge {
+      margin: .05rem 0 0;
+      color: var(--gold);
+      font-size: clamp(5.5rem, 14vw, 9.7rem);
+      line-height: .86;
+      font-weight: 700;
+      letter-spacing: -.035em;
+      text-shadow: 0 1px 0 rgba(255,255,255,.22);
+    }
+
+    .from-this {
+      margin: .15rem 0 .05rem;
+      font-size: clamp(1.05rem, 2vw, 1.45rem);
+    }
+
+    .humble {
+      margin: .05rem 0 1rem;
+      font-size: clamp(1.7rem, 4vw, 3.1rem);
+      letter-spacing: .17em;
+      font-weight: 600;
+    }
+
+    .question-box {
+      width: min(800px, 94vw);
+      margin: .3rem auto 1rem;
+      padding: .75rem 1rem .85rem;
+      border-top: 1px solid rgba(154,106,25,.8);
+      border-bottom: 1px solid rgba(154,106,25,.8);
+    }
+
+    .question {
+      margin: 0;
+      font-size: clamp(2.25rem, 5vw, 4rem);
+      line-height: 1;
+    }
+
+    .meus {
+      display: inline-block;
+      position: relative;
+    }
+
+    .meus::after {
+      content: "";
+      position: absolute;
+      left: 5%;
+      right: 2%;
+      bottom: -.12em;
+      border-bottom: .09em solid var(--gold);
+      transform: rotate(-1deg);
+    }
+
+    .choices {
+      width: min(760px, 94vw);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.15rem;
+    }
+
+    .choice {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2rem;
+      border: 2px solid var(--ink);
+      border-radius: .45rem;
+      text-decoration: none;
+      color: var(--ink);
+      background: rgba(246, 232, 203, .70);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      box-shadow: inset 0 0 0 3px rgba(154,106,25,.15);
+    }
+
+    .choice.yes {
+      color: #f3e4c3;
+      background: #181815;
+      border-color: #181815;
+    }
+
+    .choice:hover,
+    .choice:focus-visible {
+      transform: translateY(-1px);
     }
 
     .choice:focus-visible {
-      outline: 4px solid #1f5eff;
-      outline-offset: 3px;
+      outline: 3px solid #1f5eff;
+      outline-offset: 4px;
     }
 
-    .yes {
-      left: 12.2%;
-      width: 35.0%;
-    }
+    @media (max-width: 640px) {
+      .beholder {
+        width: 165vw;
+        top: 43%;
+        opacity: .15;
+      }
 
-    .no {
-      left: 53.1%;
-      width: 35.0%;
-    }
+      .choices {
+        gap: .75rem;
+      }
 
-    @media (max-aspect-ratio: 2 / 3) {
-      .poster {
-        width: 100vw;
+      .choice {
+        min-height: 68px;
+        padding: .75rem 1rem;
+      }
+
+      .humble {
+        letter-spacing: .09em;
       }
     }
   </style>
 </head>
+
 <body>
-  <main class="poster" aria-label="Our Lovely System bootstrap invitation">
+  <main class="page">
     <img
-      src="bootstrap-beholder.png"
-      alt="Beauty lies within the eye of the beholder. Behold. Describe what you see. Shape the future of My Lovely System so that Our Lovely System can emerge from this humble beginning. Will you help meus?"
+      class="beholder"
+      src="bootstrap-beholder-transparent.png"
+      alt=""
+      aria-hidden="true"
     >
 
-    <a
-      class="choice yes"
-      href="https://terms.ourlovelysystem.org"
-      aria-label="Yes"
-    >YES</a>
+    <section class="content">
+      <p class="beauty">Beauty <strong>LIES</strong></p>
+      <p class="beholder-line">Within the eye of the beholder</p>
 
-    <a
-      class="choice no"
-      href="no.html"
-      aria-label="No"
-    >NO</a>
+      <div class="rule" aria-hidden="true"></div>
+
+      <h1 class="behold">BEHOLD</h1>
+
+      <p class="describe">Describe what you see.</p>
+
+      <div class="rule" aria-hidden="true"></div>
+
+      <p class="shape">Shape the future of</p>
+      <p class="system">My Lovely System</p>
+
+      <p class="connector">so that</p>
+
+      <p class="system">Our Lovely System</p>
+
+      <p class="connector">can</p>
+
+      <p class="emerge">EMERGE</p>
+
+      <p class="from-this">from this</p>
+      <p class="humble">HUMBLE BEGINNING.</p>
+
+      <div class="question-box">
+        <p class="question">Will you help <span class="meus">meus</span>?</p>
+      </div>
+
+      <div class="choices">
+        <a class="choice yes" href="https://terms.ourlovelysystem.org">YES</a>
+        <a class="choice no" href="no.html">NO</a>
+      </div>
+    </section>
   </main>
+
+  <script>
+    const content = document.querySelector(".content");
+
+    function fitToView() {
+      content.style.transform = "scale(1)";
+
+      requestAnimationFrame(() => {
+        const availableWidth = window.innerWidth - 32;
+        const availableHeight = window.innerHeight - 24;
+
+        const contentWidth = content.scrollWidth;
+        const contentHeight = content.scrollHeight;
+
+        const scale = Math.min(
+          1,
+          availableWidth / contentWidth,
+          availableHeight / contentHeight
+        );
+
+        content.style.transform = `scale(${scale})`;
+      });
+    }
+
+    window.addEventListener("load", fitToView);
+    window.addEventListener("resize", fitToView);
+  </script>
+
 </body>
 </html>
